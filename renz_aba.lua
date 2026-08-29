@@ -206,12 +206,12 @@ local function AntiGiornoFlowers(Value) end
 
 
     local ESP_Gui = nil
-    pcall(function()
-        local objs = game:GetObjects('rbxassetid://99131262255411')
-        if objs and #objs > 0 then
-            ESP_Gui = objs[1]
-        end
-    end)
+pcall(function()
+    local objs = game:GetObjects('rbxassetid://99131262255411')
+    if objs and #objs > 0 then
+        ESP_Gui = objs[1]
+    end
+end)
 
     local moveForward  = 0
     local moveBackward = 0
