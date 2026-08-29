@@ -1,4 +1,4 @@
---// Renz Hub Execution Environment Polyfills & Clean Reload Handler
+--// Execution Environment Polyfills & Clean Reload Handler
 local getgenv = getgenv or function() return _G end
 
 -- Unload previous instance if re-executing
@@ -36,9 +36,7 @@ local function APBreaker(Value) end
 local function AntiPools(Value) end
 local function AntiGiornoFlowers(Value) end
 
-    if not game.IsLoaded then
-        game.Loaded:Wait();
-    end;
+    -- Loaded wait bypassed
 
     -- HasExecuted bypass: allows instant re-execution
 
@@ -56,9 +54,9 @@ local function AntiGiornoFlowers(Value) end
     local RunService = game:GetService("RunService");
     local TeleportService = game:GetService("TeleportService");
     local VirtualInputManager = game:GetService("VirtualInputManager");
-    local Live = workspace:WaitForChild('Live');
+    local Live = workspace:FindFirstChild('Live') or workspace:WaitForChild('Live', 2) or workspace;
 
-    local Effect = ReplicatedStorage:WaitForChild('Effect');
+    local Effect = ReplicatedStorage:FindFirstChild('Effect');
 
     loadstring([[getgenv().LPH_NO_VIRTUALIZE = function(...) return ...; end;]])()
     loadstring([[getgenv().LPH_JIT_MAX = function(...) return ...; end;]])()
@@ -66,7 +64,7 @@ local function AntiGiornoFlowers(Value) end
     local Connections = {};
 
     local Player = Players.LocalPlayer;
-    local PlayerGui = Player.PlayerGui;
+    local PlayerGui = Player:FindFirstChild('PlayerGui') or Player:WaitForChild('PlayerGui', 5);
     local StarterGui = game:GetService("StarterGui");
 
     local StreamerModeConnections = {};
@@ -199,9 +197,7 @@ local function AntiGiornoFlowers(Value) end
     end;
 
 
-    if not Player.Character then
-        repeat task.wait() until Player.Character
-    end;
+    -- Character wait bypassed
     task.wait(1);
 
     local Mouse = Player:GetMouse();
