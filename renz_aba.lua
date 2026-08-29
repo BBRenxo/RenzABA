@@ -1,3 +1,4 @@
+--// Execution Environment Polyfills & Safety Guards
 local getgenv = getgenv or function() return _G end
 local isfile = isfile or function() return false end
 local readfile = readfile or function() return "" end
@@ -9,8 +10,14 @@ local listfiles = listfiles or function() return {} end
 local setclipboard = setclipboard or toclipboard or set_clipboard or function() end
 local isnetworkowner = isnetworkowner or isnetowner or function() return true end
 
-local AttachToBack = nil
+local LPH_NO_VIRTUALIZE = getgenv().LPH_NO_VIRTUALIZE or function(...) return ... end
+local LPH_JIT_MAX = getgenv().LPH_JIT_MAX or function(...) return ... end
+getgenv().LPH_NO_VIRTUALIZE = LPH_NO_VIRTUALIZE
+getgenv().LPH_JIT_MAX = LPH_JIT_MAX
+
 local CurrentlyPlayingTrack = nil
+local AttachToBack = nil
+local RaidenSkipModeConnection = nil
 local function APBreaker(Value) end
 local function AntiPools(Value) end
 local function AntiGiornoFlowers(Value) end
@@ -20,11 +27,13 @@ local function AntiGiornoFlowers(Value) end
     end;
 
     if getgenv().HasExecuted then
-        if getgenv().ProjectABA then
-            ProjectABA.Lib:Notify('Already executed once; please unload the script before attempting again.');
-        end;
-        return;
-    end;
+    if getgenv().RenzHub and getgenv().RenzHub.Lib and getgenv().RenzHub.Lib.Unload then
+        pcall(function() getgenv().RenzHub.Lib:Unload() end)
+    elseif getgenv().RenzHub and getgenv().RenzHub.Lib and getgenv().RenzHub.Lib.Unload then
+        pcall(function() getgenv().RenzHub.Lib:Unload() end)
+    end
+end
+getgenv().HasExecuted = true
 
     getgenv().HasExecuted = true;
     getgenv().AfterKey = getgenv().AfterKey or 'T';
@@ -334,7 +343,7 @@ local function AntiGiornoFlowers(Value) end
     end;
 
 
-    getgenv().ProjectABA = {
+    getgenv().RenzHub = {
         Lib = Library,
         SaveManager = SaveManager,
         ThemeManager = ThemeManager,
@@ -356,7 +365,7 @@ local function AntiGiornoFlowers(Value) end
         end;
     end));
 
-    if not Drawing then Player:Kick('Drawing library unsupported; terminating'); return; end;
+    -- Drawing check bypassed for universal executor compatibility;
 
     local Watermark;
     local OuterFrame;
