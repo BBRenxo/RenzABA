@@ -1,5 +1,19 @@
---// Execution Environment Polyfills & Safety Guards
+--// Renz Hub Execution Environment Polyfills & Clean Reload Handler
 local getgenv = getgenv or function() return _G end
+
+-- Unload previous instance if re-executing
+pcall(function()
+    if getgenv()._RenzHubInstance and getgenv()._RenzHubInstance.Unload then
+        getgenv()._RenzHubInstance:Unload()
+    end
+    if getgenv().RenzHub and getgenv().RenzHub.Lib and getgenv().RenzHub.Lib.Unload then
+        getgenv().RenzHub.Lib:Unload()
+    end
+    if getgenv().ProjectABA and getgenv().ProjectABA.Lib and getgenv().ProjectABA.Lib.Unload then
+        getgenv().ProjectABA.Lib:Unload()
+    end
+end)
+
 local isfile = isfile or function() return false end
 local readfile = readfile or function() return "" end
 local writefile = writefile or function() end
@@ -26,14 +40,7 @@ local function AntiGiornoFlowers(Value) end
         game.Loaded:Wait();
     end;
 
-    if getgenv().HasExecuted then
-    if getgenv().ProjectABA and getgenv().ProjectABA.Lib and getgenv().ProjectABA.Lib.Unload then
-        pcall(function() getgenv().ProjectABA.Lib:Unload() end)
-    elseif getgenv().RenzHub and getgenv().RenzHub.Lib and getgenv().RenzHub.Lib.Unload then
-        pcall(function() getgenv().RenzHub.Lib:Unload() end)
-    end
-end
-getgenv().HasExecuted = true
+    -- HasExecuted bypass: allows instant re-execution
 
     getgenv().HasExecuted = true;
     getgenv().AfterKey = getgenv().AfterKey or 'T';
@@ -365,7 +372,7 @@ getgenv().HasExecuted = true
         end;
     end));
 
-    -- Drawing check bypassed for universal executor compatibility;
+    -- Drawing check bypassed;
 
     local Watermark;
     local OuterFrame;
@@ -3497,3 +3504,4 @@ getgenv().HasExecuted = true
     SaveManager:BuildConfigSection(Tabs['UI Settings'])
     ThemeManager:ApplyToTab(Tabs['UI Settings'])
     SaveManager:LoadAutoloadConfig()
+getgenv()._RenzHubInstance = Library
